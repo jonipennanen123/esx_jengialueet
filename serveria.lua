@@ -1,7 +1,7 @@
 arp = nil
 
 Citizen.CreateThread(function()
-	while esx == nil do
+	while arp == nil do
 		TriggerEvent('esx:getSharedObject', function(obj) arp = obj end)
 		Citizen.Wait(0)
 	end
