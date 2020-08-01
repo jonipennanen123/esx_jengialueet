@@ -29,13 +29,13 @@ Citizen.CreateThread(function()
 	end
 	
 	if jengissa then
-		TriggerServerEvent('arp_jengialueet:fetchmestat')
+		TriggerServerEvent('esx_jengialueet:fetchmestat')
 	end
 end)
 
 
-RegisterNetEvent('arp_jengialueet:mestat')
-AddEventHandler('arp_jengialueet:mestat', function(result)
+RegisterNetEvent('esx_jengialueet:mestat')
+AddEventHandler('esx_jengialueet:mestat', function(result)
 	if jengissa then
 		hahaatable = result
 		if blipit then
@@ -97,47 +97,47 @@ function drawTxt(x,y ,width,height,scale, text, r,g,b,a, outline)
 
 end
 
-RegisterNetEvent('arp_jengialueet:currentlyclaiming')
-AddEventHandler('arp_jengialueet:currentlyclaiming', function(mesta)
+RegisterNetEvent('esx_jengialueet:currentlyclaiming')
+AddEventHandler('esx_jengialueet:currentlyclaiming', function(mesta)
 	alueenperkele = mesta
 	holdingup = true
 end)
 
-RegisterNetEvent('arp_jengialueet:menetetty')
-AddEventHandler('arp_jengialueet:menetetty', function(kohte)
+RegisterNetEvent('esx_jengialueet:menetetty')
+AddEventHandler('esx_jengialueet:menetetty', function(kohte)
 	SetBlipColour(Areas[kohte].nameofarea,4)
 end)
 
-RegisterNetEvent('arp_jengialueet:killblip')
-AddEventHandler('arp_jengialueet:killblip', function(kohte)
+RegisterNetEvent('esx_jengialueet:killblip')
+AddEventHandler('esx_jengialueet:killblip', function(kohte)
 	SetBlipColour(Areas[kohte].nameofarea,69)
 end)
 
-RegisterNetEvent('arp_jengialueet:setblip')
-AddEventHandler('arp_jengialueet:setblip', function(kohte)
+RegisterNetEvent('esx_jengialueet:setblip')
+AddEventHandler('esx_jengialueet:setblip', function(kohte)
 	SetBlipColour(Areas[kohte].nameofarea,59)
 end)
 
-RegisterNetEvent('arp_jengialueet:toofarlocal')
-AddEventHandler('arp_jengialueet:toofarlocal', function()
+RegisterNetEvent('esx_jengialueet:toofarlocal')
+AddEventHandler('esx_jengialueet:toofarlocal', function()
 	holdingup = false
 	claimingName = ""
 end)
 
-RegisterNetEvent('arp_jengialueet:muille')
-AddEventHandler('arp_jengialueet:muille', function(alue)
+RegisterNetEvent('esx_jengialueet:muille')
+AddEventHandler('esx_jengialueet:muille', function(alue)
 	ESX.ShowNotification('Jengisi on vallannut alueen')
 	SetBlipColour(Areas[alue].nameofarea,69)
 end)
 
-RegisterNetEvent('arp_jengialueet:claimcomplete')
-AddEventHandler('arp_jengialueet:claimcomplete', function()
+RegisterNetEvent('esx_jengialueet:claimcomplete')
+AddEventHandler('esx_jengialueet:claimcomplete', function()
 	holdingup = false
 	alueenperkele = ""
 end)
 
-RegisterNetEvent('arp_jengialueet:valloitusilmoitus') --testi 28.5
-AddEventHandler('arp_jengialueet:valloitusilmoitus', function(notifikaatio)
+RegisterNetEvent('esx_jengialueet:valloitusilmoitus') --testi 28.5
+AddEventHandler('esx_jengialueet:valloitusilmoitus', function(notifikaatio)
 	if not ryostetaan[notifikaatio] then
 		ryostetaan[notifikaatio] = true
 	else
@@ -153,8 +153,8 @@ AddEventHandler('arp_jengialueet:valloitusilmoitus', function(notifikaatio)
 	end
 end)
 
-RegisterNetEvent('arp_jengialueet:starttimer')
-AddEventHandler('arp_jengialueet:starttimer', function()
+RegisterNetEvent('esx_jengialueet:starttimer')
+AddEventHandler('esx_jengialueet:starttimer', function()
 	timer = Config.Valtausaika
 	laskuri = 0
 	Citizen.CreateThread(function()
@@ -210,7 +210,7 @@ Citizen.Wait(21000) --aika hakea työpaikka 8.5
 							if not jengissa then-- onko asetta								
 								ESX.ShowNotification('Et kuulu jengiin')
 							else
-								TriggerServerEvent('arp_jengialueet:claim', area)
+								TriggerServerEvent('esx_jengialueet:claim', area)
 							end
 						else
 							ESX.ShowNotification('Paljainkäsinkö ajattelit pelotella kansalaisia?!?') -- ei välineitä mukana
@@ -253,7 +253,7 @@ Citizen.Wait(21000) --aika hakea työpaikka 8.5
 			end
 			local pos2 = Areas[alueenperkele].position
 			if Vdist(pos.x, pos.y, pos.z, pos2.x, pos2.y, pos2.z) > Config.MaxDistance then
-				TriggerServerEvent('arp_jengialueet:toofar', alueenperkele)
+				TriggerServerEvent('esx_jengialueet:toofar', alueenperkele)
 				timer = 0
 			end
 
@@ -265,16 +265,16 @@ Citizen.Wait(21000) --aika hakea työpaikka 8.5
 
 			if IsPedDeadOrDying(GetPlayerPed(-1)) then
 				timer = 0
-				TriggerServerEvent('arp_jengialueet:toofar', alueenperkele)
+				TriggerServerEvent('esx_jengialueet:toofar', alueenperkele)
 			end
 
 			if timer == 0 then
-				TriggerServerEvent('arp_jengialueet:toofar', alueenperkele)
+				TriggerServerEvent('esx_jengialueet:toofar', alueenperkele)
 				holdingup = false
 			end
 			
 			if laskuri == Config.Montakoalistetaan then
-				TriggerServerEvent('arp_jengialueet:rostoohi', alueenperkele)
+				TriggerServerEvent('esx_jengialueet:rostoohi', alueenperkele)
 				holdingup = false
 				laskuri = 0
 			end
