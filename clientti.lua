@@ -72,8 +72,8 @@ AddEventHandler('arp_jengialueet:mestat', function(result)
 	end
 end)
 
-RegisterNetEvent('arp:setJob')
-AddEventHandler('arp:setJob', function()
+RegisterNetEvent('esx:setJob')
+AddEventHandler('esx:setJob', function()
 	jengissa = false
 	PlayerData = ESX.GetPlayerData()
 	for i = 1, #Jobit, 1 do
