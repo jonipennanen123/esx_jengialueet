@@ -7,33 +7,22 @@ local jengissa = false
 local ryostetaan = {}
 ESX = nil
 
-local Keys = {
-	["ESC"] = 322, ["F1"] = 288, ["F2"] = 289, ["F3"] = 170, ["F5"] = 166, ["F6"] = 167, ["F7"] = 168, ["F8"] = 169, ["F9"] = 56, ["F10"] = 57,
-	["~"] = 243, ["1"] = 157, ["2"] = 158, ["3"] = 160, ["4"] = 164, ["5"] = 165, ["6"] = 159, ["7"] = 161, ["8"] = 162, ["9"] = 163, ["-"] = 84, ["="] = 83, ["BACKSPACE"] = 177,
-	["TAB"] = 37, ["Q"] = 44, ["W"] = 32, ["E"] = 38, ["R"] = 45, ["T"] = 245, ["Y"] = 246, ["U"] = 303, ["P"] = 199, ["["] = 39, ["]"] = 40, ["ENTER"] = 18,
-	["CAPS"] = 137, ["A"] = 34, ["S"] = 8, ["D"] = 9, ["F"] = 23, ["G"] = 47, ["H"] = 74, ["K"] = 311, ["L"] = 182,
-	["LEFTSHIFT"] = 21, ["Z"] = 20, ["X"] = 73, ["C"] = 26, ["V"] = 0, ["B"] = 29, ["N"] = 249, ["M"] = 244, [","] = 82, ["."] = 81,
-	["LEFTCTRL"] = 36, ["LEFTALT"] = 19, ["SPACE"] = 22, ["RIGHTCTRL"] = 70,
-	["HOME"] = 213, ["PAGEUP"] = 10, ["PAGEDOWN"] = 11, ["DELETE"] = 178,
-	["LEFT"] = 174, ["RIGHT"] = 175, ["TOP"] = 27, ["DOWN"] = 173,
-	["NENTER"] = 201, ["N4"] = 108, ["N5"] = 60, ["N6"] = 107, ["N+"] = 96, ["N-"] = 97, ["N7"] = 117, ["N8"] = 61, ["N9"] = 118
-}
 
 Citizen.CreateThread(function()
 	while ESX == nil do
 		TriggerEvent('esx:getSharedObject', function(obj) ESX = obj end)
 		Citizen.Wait(0)
 	end
-	
-	Citizen.Wait(10000)
-	
-	while PlayerData == nil do
-		PlayerData = ESX.GetPlayerData()
-		Citizen.Wait(1000)
+	while ESX.GetPlayerData().job == nil do
+		Citizen.Wait(10)
 	end
+
+	ESX.PlayerData = ESX.GetPlayerData()
+
+	Citizen.Wait(5000)
 	
 	for i = 1, #Jobit, 1 do
-		if PlayerData.job.name == Jobit[i] then
+		if ESX.PlayerData.job.name == Jobit[i] then
 			jengissa = true
 			break
 		end
@@ -61,7 +50,7 @@ AddEventHandler('arp_jengialueet:mestat', function(result)
 				local ve = Areas[i].position
 				Areas[i].nameofarea = AddBlipForRadius(ve.x, ve.y, ve.z, 500.0)  --350 alkuperänen
 				SetBlipColour(Areas[i].nameofarea,69)
-				if hahaatable[i].omistaja == PlayerData.job.name then
+				if hahaatable[i].omistaja == ESX.PlayerData.job.name then
 					SetBlipColour(Areas[i].nameofarea,69)
 				else
 					SetBlipColour(Areas[i].nameofarea,4)
@@ -73,11 +62,11 @@ AddEventHandler('arp_jengialueet:mestat', function(result)
 end)
 
 RegisterNetEvent('esx:setJob')
-AddEventHandler('esx:setJob', function()
+AddEventHandler('esx:setJob', function(job)
 	jengissa = false
-	PlayerData = ESX.GetPlayerData()
+	ESX.PlayerData.job = job
 	for i = 1, #Jobit, 1 do
-		if PlayerData.job.name == Jobit[i] then
+		if ESX.PlayerData.job.name == Jobit[i] then
 			jengissa = true
 			break
 		end
@@ -89,7 +78,7 @@ AddEventHandler('esx:setJob', function()
 		blipit = false
 	end
 	if jengissa then
-		TriggerServerEvent('arp_jengialueet:fetchmestat')
+		TriggerServerEvent('esx_jengialueet:fetchmestat')
 	end
 end)
 
@@ -215,7 +204,7 @@ Citizen.Wait(21000) --aika hakea työpaikka 8.5
 					else
 						ESX.ShowHelpNotification('Paina ~INPUT_CONTEXT~ vallataksesi alue - ~g~'..Areas[i].nameofree) -- ilmoitus paina E
 					end
-					if IsControlJustReleased(0, Keys['E']) then -- käynnistä ryöstö
+					if IsControlJustReleased(0, 38) then -- käynnistä ryöstö
 						Citizen.Wait(2000)
 						if IsPedArmed(PlayerPedId(), 7) then
 							if not jengissa then-- onko asetta								
