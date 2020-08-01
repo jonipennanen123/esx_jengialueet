@@ -1,8 +1,8 @@
-arp = nil
+ESX = nil
 
 Citizen.CreateThread(function()
-	while arp == nil do
-		TriggerEvent('esx:getSharedObject', function(obj) arp = obj end)
+	while ESX == nil do
+		TriggerEvent('esx:getSharedObject', function(obj) ESX = obj end)
 		Citizen.Wait(0)
 	end
 end)
@@ -58,28 +58,28 @@ Citizen.CreateThread(function()
 	end
 end)
 
-RegisterServerEvent('arp_jengialueet:toofar')
-AddEventHandler('arp_jengialueet:toofar', function(alue)
-	TriggerClientEvent('arp_jengialueet:toofarlocal', source)
-	local xPlayers = arp.GetPlayers()
+RegisterServerEvent('esx_jengialueet:toofar')
+AddEventHandler('esx_jengialueet:toofar', function(alue)
+	TriggerClientEvent('esx_jengialueet:toofarlocal', source)
+	local xPlayers = ESX.GetPlayers()
 	if sellane[alue].omistaja ~= "" then
 		for i=1, #xPlayers, 1 do
-			local xPlayer = arp.GetPlayerFromId(xPlayers[i])
+			local xPlayer = ESX.GetPlayerFromId(xPlayers[i])
 			if sellane[alue].omistaja == xPlayer.job.name then
-				TriggerClientEvent('arp_jengialueet:killblip', xPlayers[i], alue)
+				TriggerClientEvent('esx_jengialueet:killblip', xPlayers[i], alue)
 			end
 		end
 	end
 end)
 
-RegisterServerEvent('arp_jengialueet:rostoohi')
-AddEventHandler('arp_jengialueet:rostoohi', function(tyo)
-	TriggerEvent("DiscordBot:triggerrit", source, "Triggeras 'arp_jengialueet:rostoohi'")
-	TriggerClientEvent('arp_jengialueet:claimcomplete', source)
+RegisterServerEvent('esx_jengialueet:rostoohi')
+AddEventHandler('esx_jengialueet:rostoohi', function(tyo)
+	TriggerEvent("DiscordBot:triggerrit", source, "Triggeras 'esx_jengialueet:rostoohi'")
+	TriggerClientEvent('esx_jengialueet:claimcomplete', source)
 	local vanhatomistajat = sellane[tyo].omistaja
-	local xPlayer = arp.GetPlayerFromId(source)
+	local xPlayer = ESX.GetPlayerFromId(source)
 	local tyoukko = xPlayer.job.name
-	local xPlayers = arp.GetPlayers()
+	local xPlayers = ESX.GetPlayers()
 	for i = 1, #Jobit, 1 do
 		if xPlayer.job.name == Jobit[i] then
 			MySQL.Async.execute("UPDATE alueet SET `omistaja` = @ukontyo WHERE alue = @tyo",{['@tyo'] = tyo, ['@ukontyo']    = xPlayer.job.name})
@@ -99,16 +99,16 @@ AddEventHandler('arp_jengialueet:rostoohi', function(tyo)
 				}
 			end)
 			for i=1, #xPlayers, 1 do
-				local xPlayer = arp.GetPlayerFromId(xPlayers[i])
+				local xPlayer = ESX.GetPlayerFromId(xPlayers[i])
 				if tyoukko == xPlayer.job.name then
-					TriggerClientEvent('arp_jengialueet:muille', xPlayers[i], tyo)
+					TriggerClientEvent('esx_jengialueet:muille', xPlayers[i], tyo)
 				end
 			end
 			if vanhatomistajat ~= "" then
 				for i=1, #xPlayers, 1 do
-					local xPlayer = arp.GetPlayerFromId(xPlayers[i])
+					local xPlayer = ESX.GetPlayerFromId(xPlayers[i])
 					if vanhatomistajat == xPlayer.job.name then
-						TriggerClientEvent('arp_jengialueet:menetetty', xPlayers[i], alue)
+						TriggerClientEvent('esx_jengialueet:menetetty', xPlayers[i], alue)
 					end
 				end
 			end
@@ -119,16 +119,16 @@ end)
 
 
 
-RegisterServerEvent('arp_jengialueet:fetchmestat')
-AddEventHandler('arp_jengialueet:fetchmestat', function()
-	TriggerEvent("DiscordBot:triggerrit", source, "Triggeras 'arp_jengialueet:fetchmestat'")
-	TriggerClientEvent('arp_jengialueet:mestat', source, sellane)
+RegisterServerEvent('esx_jengialueet:fetchmestat')
+AddEventHandler('esx_jengialueet:fetchmestat', function()
+	TriggerEvent("DiscordBot:triggerrit", source, "Triggeras 'esx_jengialueet:fetchmestat'")
+	TriggerClientEvent('esx_jengialueet:mestat', source, sellane)
 end)
-RegisterServerEvent('arp_jengialueet:claim')
-AddEventHandler('arp_jengialueet:claim', function(k)
-	TriggerEvent("DiscordBot:triggerrit", source, "Triggeras 'arp_jengialueet:claim'")
+RegisterServerEvent('esx_jengialueet:claim')
+AddEventHandler('esx_jengialueet:claim', function(k)
+	TriggerEvent("DiscordBot:triggerrit", source, "Triggeras 'esx_jengialueet:claim'")
 	local source = source
-	local xPlayer = arp.GetPlayerFromId(source)
+	local xPlayer = ESX.GetPlayerFromId(source)
 	if sellane[k].omistaja == xPlayer.job.name then
 		MySQL.Async.fetchAll("SELECT * FROM `alueet`",
 		{},
@@ -150,19 +150,19 @@ AddEventHandler('arp_jengialueet:claim', function(k)
 		MySQL.Async.execute("UPDATE alueet SET `rahamaara` = @rahoja WHERE alue = @numero",{["@numero"] = k,["@rahoja"] = 0})
 
 	else
-		local xPlayers = arp.GetPlayers()
+		local xPlayers = ESX.GetPlayers()
 		local cops = 0
 		local omistajiapaikalla = 0
 	
 		for i=1, #xPlayers, 1 do
-			local xPlayer = arp.GetPlayerFromId(xPlayers[i])
+			local xPlayer = ESX.GetPlayerFromId(xPlayers[i])
 			if xPlayer.job.name == 'police' then
 					cops = cops + 1
 			end
 		end
 		if sellane[k].omistaja ~= "" then
 			for i=1, #xPlayers, 1 do
-				local xPlayer = arp.GetPlayerFromId(xPlayers[i])
+				local xPlayer = ESX.GetPlayerFromId(xPlayers[i])
 				if sellane[i].omistaja == xPlayer.job.name then
 					omistajiapaikalla = omistajiapaikalla + 1
 				end
@@ -170,22 +170,22 @@ AddEventHandler('arp_jengialueet:claim', function(k)
 		end
 		if cops >= Config.TarvittavatPoliisitAloitukseen then
 			if omistajiapaikalla >= Config.TarvittavatOmistajatAloitukseen or sellane[k].omistaja == "" then
-				TriggerClientEvent("arp_jengialueet:starttimer", source)
-				TriggerClientEvent("arp_jengialueet:currentlyclaiming", source, k)
+				TriggerClientEvent("esx_jengialueet:starttimer", source)
+				TriggerClientEvent("esx_jengialueet:currentlyclaiming", source, k)
 				if sellane[k].omistaja ~= "" then
 					for i=1, #xPlayers, 1 do
-						local xPlayer = arp.GetPlayerFromId(xPlayers[i])
+						local xPlayer = ESX.GetPlayerFromId(xPlayers[i])
 						if sellane[k].omistaja == xPlayer.job.name then
-							TriggerClientEvent("arp_jengialueet:valloitusilmoitus", xPlayers[i], k)
-							TriggerClientEvent('arp_jengialueet:setblip', xPlayers[i], k)
+							TriggerClientEvent("esx_jengialueet:valloitusilmoitus", xPlayers[i], k)
+							TriggerClientEvent('esx_jengialueet:setblip', xPlayers[i], k)
 						end
 					end
 				end
 			else
-				TriggerClientEvent('arp:showNotification', source, "Kaupungissa pitää olla vähintää ~y~ "..Config.TarvittavatOmistajatAloitukseen.." alueen omistajaa~s~ paikalla valtauksen aloitukseen.")
+				TriggerClientEvent('esx:showNotification', source, "Kaupungissa pitää olla vähintää ~y~ "..Config.TarvittavatOmistajatAloitukseen.." alueen omistajaa~s~ paikalla valtauksen aloitukseen.")
 			end
 		else
-			TriggerClientEvent('arp:showNotification', source, "Kaupungissa pitää olla vähintää ~b~"..Config.TarvittavatPoliisitAloitukseen.." poliisia~s~ paikalla valtauksen aloitukseen.")
+			TriggerClientEvent('esx:showNotification', source, "Kaupungissa pitää olla vähintää ~b~"..Config.TarvittavatPoliisitAloitukseen.." poliisia~s~ paikalla valtauksen aloitukseen.")
 		end
 	end
 end)
