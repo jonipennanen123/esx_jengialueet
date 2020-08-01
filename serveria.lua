@@ -7,8 +7,6 @@ Citizen.CreateThread(function()
 	end
 end)
 local sellane={}
-local rahat={}
-local valmisk = false
 
 MySQL.ready(function()
 	MySQL.Async.fetchAll("SELECT * FROM `alueet`",
@@ -26,36 +24,20 @@ MySQL.ready(function()
 		{omistaja = result[8]['omistaja']}
 		}
 	end)
-	valmisk = true
 end)
 
 Citizen.CreateThread(function()
   while true do
-	if valmisk then
-		MySQL.Async.fetchAll("SELECT * FROM `alueet`",
-		{},
-		function(result)
-		
-			rahat = {
-			{rahamaara = result[1]['rahamaara']},
-			{rahamaara = result[2]['rahamaara']},
-			{rahamaara = result[3]['rahamaara']},
-			{rahamaara = result[4]['rahamaara']},
-			{rahamaara = result[5]['rahamaara']},
-			{rahamaara = result[6]['rahamaara']},
-			{rahamaara = result[7]['rahamaara']},
-			{rahamaara = result[8]['rahamaara']}
-			}
-		end)
-		Citizen.Wait(1000)
-		for i=1, 8 do
-			local rahattiskiin = rahat[i].rahamaara + Config.Tikkipalkansuuruus
+	MySQL.Async.fetchAll("SELECT * FROM `alueet`",
+	{},
+	function(result)	
+		for i=1, #result do
+			local rahattiskiin = result[i].rahamaara + Config.Tikkipalkansuuruus
 			MySQL.Async.execute("UPDATE alueet SET `rahamaara` = @rahoja WHERE alue = @numero",{["@numero"] = i,["@rahoja"] = rahattiskiin})
-		end
-		Citizen.Wait(Config.Tikkipalkkansaanninaika * 60000)
-		end
-	Citizen.Wait(1)
-	end
+		end			
+	end)
+	Citizen.Wait(Config.Tikkipalkkansaanninaika * 60000)
+  end
 end)
 
 RegisterServerEvent('esx_jengialueet:toofar')
@@ -133,21 +115,9 @@ AddEventHandler('esx_jengialueet:claim', function(k)
 		MySQL.Async.fetchAll("SELECT * FROM `alueet`",
 		{},
 		function(result)
-		
-			rahat = {
-			{rahamaara = result[1]['rahamaara']},
-			{rahamaara = result[2]['rahamaara']},
-			{rahamaara = result[3]['rahamaara']},
-			{rahamaara = result[4]['rahamaara']},
-			{rahamaara = result[5]['rahamaara']},
-			{rahamaara = result[6]['rahamaara']},
-			{rahamaara = result[7]['rahamaara']},
-			{rahamaara = result[8]['rahamaara']}
-			}
+			xPlayer.addAccountMoney('black_money', tonumber(result[k].rahamaara))
+			MySQL.Async.execute("UPDATE alueet SET `rahamaara` = @rahoja WHERE alue = @numero",{["@numero"] = k,["@rahoja"] = 0})
 		end)
-		Citizen.Wait(1000)
-		xPlayer.addAccountMoney('black_money', tonumber(rahat[k].rahamaara))
-		MySQL.Async.execute("UPDATE alueet SET `rahamaara` = @rahoja WHERE alue = @numero",{["@numero"] = k,["@rahoja"] = 0})
 
 	else
 		local xPlayers = ESX.GetPlayers()
